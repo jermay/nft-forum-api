@@ -34,4 +34,8 @@ export class ApiConfigService implements EnvironmentVars {
   get DATABASE_NAME(): string {
     return this.configService.get<string>('DATABASE_NAME');
   }
+
+  get JWT_SECRET(): string {
+    return this.configService.get<string>('JWT_SECRET');
+  }
 }

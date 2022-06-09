@@ -1,35 +1,40 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ApiConfigModule } from './config/ApiConfig.module';
 import { ApiConfigService } from './config/ApiConfig.service';
-import { EnvironmentVars } from './config/environmentVars';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { User } from './user/user.entity';
+import { PassportModule } from '@nestjs/passport';
+import { EncryptionModule } from './encryption/encryption.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ApiConfigModule,
     SequelizeModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService<EnvironmentVars>) => {
-        // TODO: figure out how to inject without getting no provider error
-        const config = new ApiConfigService(configService);
-        return {
-          dialect: config.DATABASE_DIALECT,
-          host: config.DATABASE_HOST,
-          port: config.DATABASE_PORT,
-          username: config.DATABASE_USERNAME,
-          password: config.DATABASE_PASSWORD,
-          database: config.DATABASE_NAME,
-          models: [],
-        };
-      },
+      imports: [ApiConfigModule],
+      inject: [ApiConfigService],
+      useFactory: (config: ApiConfigService) => ({
+        dialect: config.DATABASE_DIALECT,
+        host: config.DATABASE_HOST,
+        port: config.DATABASE_PORT,
+        username: config.DATABASE_USERNAME,
+        password: config.DATABASE_PASSWORD,
+        database: config.DATABASE_NAME,
+        autoLoadModels: true,
+        models: [User],
+      }),
     }),
+    PassportModule,
+    UserModule,
+    AuthModule,
+    EncryptionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
+  exports: [],
 })
 export class AppModule {}

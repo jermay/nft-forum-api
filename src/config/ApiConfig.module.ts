@@ -5,6 +5,6 @@ import { ApiConfigService } from './ApiConfig.service';
 @Module({
   imports: [ConfigModule],
   providers: [ApiConfigService],
-  exports: [ConfigModule],
+  exports: [ConfigModule, ApiConfigService],
 })
 export class ApiConfigModule {}

@@ -25,12 +25,12 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User) {
+  login(user: User) {
     return this.generateAuthToken(user);
   }
 
-  generateAuthToken(user: User) {
-    const payload = { username: user.username, sub: user.id };
+  generateAuthToken(user: User): string {
+    const payload = { sub: user.username };
     return this.jwtService.sign(payload);
   }
 }

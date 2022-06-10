@@ -11,8 +11,8 @@ export class UserService {
     private encryptionService: EncryptionService,
   ) {}
 
-  async findOne(userName: string): Promise<User> {
-    return this.userModel.findOne({ where: { userName } });
+  async findOne(username: string): Promise<User> {
+    return this.userModel.findOne({ where: { username } });
   }
 
   async register(details: CreateUserDto) {

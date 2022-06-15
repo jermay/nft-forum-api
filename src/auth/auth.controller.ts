@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Next,
+  Post,
+  Request,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
 import { Public } from '../decorators/public.decorator';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { CreateUserDto } from '../user/dto/CreateUser.dto';
@@ -6,6 +14,13 @@ import { UserDto } from '../user/dto/UserDto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginResponseDto } from './dto/LoginResponse.dto';
+import { uauthClient } from './uauth';
+
+const {
+  login: uLogin,
+  callback: uCallback,
+  // middleware: uMiddleware,
+} = uauthClient.createExpressSessionLogin();
 
 @Public()
 @Controller('auth')
@@ -33,5 +48,21 @@ export class AuthController {
       accessToken,
       user: new UserDto(user),
     };
+  }
+
+  @Post('/login/unstoppable')
+  loginUnstoppable(@Request() req, @Response() res, @Next() next) {
+    console.log('/login/unstoppable', { body: req.body });
+    return uLogin(req, res, next, { username: req.body.domain });
+  }
+
+  @Post('/login/unstoppable/callback')
+  async loginUnstoppableCallback(
+    @Request() req,
+    @Response() res,
+    @Next() next,
+  ) {
+    console.log('/login/unstoppable/callback', { body: req.body });
+    await uCallback(req, res, next);
   }
 }

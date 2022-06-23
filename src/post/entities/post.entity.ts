@@ -8,8 +8,8 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Thread } from '../thread/entities/thread.entity';
-import { User } from '../user/user.entity';
+import { Thread } from '../../thread/entities/thread.entity';
+import { User } from '../../user/user.entity';
 
 @Table
 export class Post extends Model {

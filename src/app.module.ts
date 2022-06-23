@@ -11,7 +11,8 @@ import { PassportModule } from '@nestjs/passport';
 import { EncryptionModule } from './encryption/encryption.module';
 import { ThreadModule } from './thread/thread.module';
 import { Thread } from './thread/entities/thread.entity';
-import { Post } from './post/post.entity';
+import { Post } from './post/entities/post.entity';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Post } from './post/post.entity';
     AuthModule,
     EncryptionModule,
     ThreadModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [],

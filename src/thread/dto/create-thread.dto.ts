@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MaxLength } from 'class-validator';
+import { MaxLength, ValidateNested } from 'class-validator';
+import { CreatePostDto } from '../../post/dto/create-post.dto';
 
 export class CreateThreadDto {
   @ApiProperty()
@@ -7,10 +8,6 @@ export class CreateThreadDto {
   title: string;
 
   @ApiProperty()
-  @IsString()
-  author: string;
-
-  @ApiProperty()
-  @IsString()
-  content: string;
+  @ValidateNested()
+  post: CreatePostDto;
 }

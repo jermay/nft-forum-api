@@ -5,6 +5,7 @@ import { Post } from '../../src/post/entities/post.entity';
 import { mockId } from './utils';
 import { CreateThreadDto } from '../../src/thread/dto/create-thread.dto';
 import { CreatePostDto } from '../../src/post/dto/create-post.dto';
+import { getCreatePostDto } from '../factories/post.factory';
 
 export function mockPost(
   threadId?: number,
@@ -13,8 +14,9 @@ export function mockPost(
   return createMock<Post>({
     id: mockId(),
     threadId: mockId({ id: threadId }),
-    author: customValues?.author || faker.name.firstName(),
-    content: customValues?.content || faker.lorem.paragraph(),
+    ...getCreatePostDto(customValues),
+    // author: customValues?.author || faker.name.firstName(),
+    // content: customValues?.content || faker.lorem.paragraph(),
   });
 }
 

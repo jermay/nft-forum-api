@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Post } from '../post/entities/post.entity';
 import { PostService } from '../post/post.service';
@@ -36,17 +36,18 @@ export class ThreadService {
   }
 
   async update(id: number, updateThreadDto: UpdateThreadDto) {
+    const thread = await this.findOne(id);
+    if (!thread) throw new BadRequestException(`Thread id ${id} not found`);
+
     const promises: Promise<any>[] = [];
     if (updateThreadDto.title) {
-      promises.push(
-        this.threadModel.update(
-          { title: updateThreadDto.title },
-          { where: { id } },
-        ),
-      );
+      thread.title = updateThreadDto.title;
+      promises.push(thread.save());
     }
     if (updateThreadDto.post) {
-      promises.push(this.postService.update(id, updateThreadDto.post));
+      promises.push(
+        this.postService.update(thread.postId, updateThreadDto.post),
+      );
     }
     await Promise.all(promises);
     return true;

@@ -68,7 +68,7 @@ describe('ThreadService', () => {
       const dto = getCreateThreadDto(thread);
       const result = await service.update(thread.id, dto);
       expect(result).toEqual(true);
-      expect(threadModelMock.update).toHaveBeenCalledTimes(1);
+      expect(thread.save).toHaveBeenCalledTimes(1);
       expect(postModelMock.update).toHaveBeenCalledTimes(1);
     });
 
@@ -76,7 +76,7 @@ describe('ThreadService', () => {
       const dto = { title: thread.title };
       const result = await service.update(thread.id, dto);
       expect(result).toEqual(true);
-      expect(threadModelMock.update).toHaveBeenCalledTimes(1);
+      expect(thread.save).toHaveBeenCalledTimes(1);
       expect(postModelMock.update).toHaveBeenCalledTimes(0);
     });
   });

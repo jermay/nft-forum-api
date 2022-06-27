@@ -9,6 +9,10 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { EncryptionModule } from './encryption/encryption.module';
+import { ThreadModule } from './thread/thread.module';
+import { Thread } from './thread/entities/thread.entity';
+import { Post } from './post/entities/post.entity';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -25,13 +29,15 @@ import { EncryptionModule } from './encryption/encryption.module';
         password: config.DATABASE_PASSWORD,
         database: config.DATABASE_NAME,
         autoLoadModels: true,
-        models: [User],
+        models: [User, Thread, Post],
       }),
     }),
     PassportModule,
     UserModule,
     AuthModule,
     EncryptionModule,
+    ThreadModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [],

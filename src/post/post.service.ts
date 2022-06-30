@@ -12,6 +12,10 @@ export class PostService {
     return this.postModel.create({ threadId, ...createPostDto });
   }
 
+  findOne(postId: number) {
+    return this.postModel.findByPk(postId);
+  }
+
   async update(id: number, updatePostDto: UpdatePostDto) {
     await this.postModel.update(updatePostDto, { where: { id } });
     return true;

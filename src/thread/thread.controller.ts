@@ -29,19 +29,22 @@ export class ThreadController {
     return this.threadService.findAll();
   }
 
-  @Get(':id')
+  @Get(':threadId')
   @ApiOkResponse({ type: Thread })
-  findOne(@Param('id') id: string) {
-    return this.threadService.findOne(+id);
+  findOne(@Param('threadId') threadId: string) {
+    return this.threadService.findOne(+threadId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateThreadDto: UpdateThreadDto) {
-    return this.threadService.update(+id, updateThreadDto);
+  @Patch(':threadId')
+  update(
+    @Param('threadId') threadId: string,
+    @Body() updateThreadDto: UpdateThreadDto,
+  ) {
+    return this.threadService.update(+threadId, updateThreadDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.threadService.remove(+id);
+  @Delete(':threadId')
+  async remove(@Param('threadId') threadId: string) {
+    await this.threadService.remove(+threadId);
   }
 }

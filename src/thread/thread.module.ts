@@ -9,5 +9,6 @@ import { PostModule } from '../post/post.module';
   imports: [SequelizeModule.forFeature([Thread]), PostModule],
   controllers: [ThreadController],
   providers: [ThreadService],
+  exports: [ThreadService],
 })
 export class ThreadModule {}

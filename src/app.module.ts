@@ -29,6 +29,7 @@ import { PostModule } from './post/post.module';
         password: config.DATABASE_PASSWORD,
         database: config.DATABASE_NAME,
         autoLoadModels: true,
+        logging: false,
         models: [User, Thread, Post],
       }),
     }),

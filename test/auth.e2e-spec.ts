@@ -60,7 +60,6 @@ describe('AuthController (e2e)', () => {
     it('should respond with status 400 if the password is less than 8 chars', async () => {
       const args = mockCreateUserDto({ password: '12345' });
       const { status, text } = await postRegister(args);
-      console.log({ text });
       expect(status).toEqual(400);
       expect(text).toMatch(
         /password must be longer than or equal to 8 characters/i,

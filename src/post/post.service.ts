@@ -8,8 +8,12 @@ import { Post } from './entities/post.entity';
 export class PostService {
   constructor(@InjectModel(Post) private postModel: typeof Post) {}
 
-  create(threadId: number, createPostDto: CreatePostDto) {
-    return this.postModel.create({ threadId, ...createPostDto });
+  create(createPostDto: CreatePostDto) {
+    return this.postModel.create({ ...createPostDto });
+  }
+
+  findOne(postId: number) {
+    return this.postModel.findByPk(postId);
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {

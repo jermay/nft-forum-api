@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import { User } from '../../src/user/user.entity';
 import { EncryptionService } from '../../src/encryption/encryption.service';
 import { UserService } from '../../src/user/user.service';
+import { AuthToken } from '../../src/auth/auth.token';
 
 export function mockUser(customValues?: Partial<User>) {
   return createMock<User>({
@@ -22,6 +23,19 @@ export async function mockUserWithPassword(
     user,
     password,
   };
+}
+
+export function mockUserAuthToken(vals?: Partial<AuthToken>): AuthToken {
+  const now = Date.now() / 1000;
+  return {
+    sub: vals?.sub || faker.name.firstName(),
+    iat: now,
+    exp: now + 3600,
+  };
+}
+
+export function mockAuthTokenFromUser(user: User) {
+  return mockUserAuthToken({ sub: user.username });
 }
 
 export async function mockUserService(encryptionService: EncryptionService) {

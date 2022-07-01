@@ -1,7 +1,18 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDto } from './dto/create-post.dto';
+import { CreatePostRequestDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostAuthorGuard } from '../guards/post-author.guard';
+import { ApiRequest } from '../auth/api-request';
 
 @Controller('comment')
 export class PostController {
@@ -10,18 +21,28 @@ export class PostController {
   @Post(':threadId')
   create(
     @Param('threadId') threadId: number,
-    @Body() createPostDto: CreatePostDto,
+    @Body() createPostDto: CreatePostRequestDto,
+    @Request() req: ApiRequest,
   ) {
-    return this.postService.create(+threadId, createPostDto);
+    return this.postService.create({
+      threadId: +threadId,
+      author: req.user.sub,
+      content: createPostDto.content,
+    });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+  @Patch(':postId')
+  @UseGuards(PostAuthorGuard)
+  update(
+    @Param('postId') postId: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    return this.postService.update(+postId, updatePostDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postService.remove(+id);
+  @Delete(':postId')
+  @UseGuards(PostAuthorGuard)
+  remove(@Param('postId') postId: string) {
+    return this.postService.remove(+postId);
   }
 }

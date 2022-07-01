@@ -10,7 +10,7 @@ export function getCreateThreadDto(
 ): CreateThreadDto {
   return {
     title: vals?.title || faker.lorem.words(),
-    post: vals?.post || getCreatePostDto(),
+    ...getCreatePostDto(vals),
   };
 }
 
@@ -19,7 +19,7 @@ export function getThreadDtoWithUser(
   vals?: Partial<CreateThreadDto>,
 ) {
   const dto = getCreateThreadDto(vals);
-  if (user) dto.post.author = user.username;
+  if (user) dto.author = user.username;
   return dto;
 }
 

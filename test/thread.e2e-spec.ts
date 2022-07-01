@@ -63,8 +63,8 @@ describe('ThreadController (e2e)', () => {
     expectThread(result, thread);
     expect(result.comments).toHaveLength(1);
     const post = result.comments[0];
-    expect(post.author).toEqual(dto.post.author);
-    expect(post.content).toEqual(dto.post.content);
+    expect(post.author).toEqual(dto.author);
+    expect(post.content).toEqual(dto.content);
   };
 
   describe('/thread POST', () => {
@@ -84,8 +84,27 @@ describe('ThreadController (e2e)', () => {
       expect(thread.title).toEqual(dto.title);
       expect(thread.comments).toHaveLength(1);
       const post = thread.comments[0];
-      expect(post.author).toEqual(dto.post.author);
-      expect(post.content).toEqual(dto.post.content);
+      expect(post.author).toEqual(dto.author);
+      expect(post.content).toEqual(dto.content);
+    });
+
+    it('should not create a thread with a different author than the caller', async () => {
+      const { user, authToken } = await authFactory.resisterTestUser();
+      const badUser = await authFactory.resisterTestUser();
+      const dto: any = {
+        ...getThreadDtoWithUser(user),
+        author: badUser.user.username,
+      };
+
+      const { status, body } = await postThread(dto, authToken);
+      expect(status).toEqual(201);
+
+      // post author should still be the caller not bad user
+      const result = body as Thread;
+      const thread = await threadService.findOne(result.id);
+      expect(thread.comments).toHaveLength(1);
+      const post = thread.comments[0];
+      expect(post.author).toEqual(user.username);
     });
   });
 
@@ -139,13 +158,10 @@ describe('ThreadController (e2e)', () => {
 
     it('should update an existing thread', async () => {
       const { user, authToken } = await authFactory.resisterTestUser();
-      const { thread, dto } = await threadFactory.createWithUser(user);
+      const { thread } = await threadFactory.createWithUser(user);
       const updateVals: UpdateThreadDto = {
         title: 'new title',
-        post: {
-          author: dto.post.author,
-          content: 'new content',
-        },
+        content: 'new content',
       };
 
       const { status } = await patchThread(thread.id, updateVals, authToken);
@@ -154,11 +170,43 @@ describe('ThreadController (e2e)', () => {
       const saved = await threadService.findOne(thread.id);
       expect(saved.title).toEqual(updateVals.title);
       const savedPost = saved.comments[0];
-      expect(savedPost.author).toEqual(dto.post.author);
-      expect(savedPost.content).toEqual(updateVals.post.content);
+      expect(savedPost.author).toEqual(user.username);
+      expect(savedPost.content).toEqual(updateVals.content);
     });
 
-    it.todo('should NOT update the thread author');
+    it('should return status 403 if the caller is not the author', async () => {
+      const { user } = await authFactory.resisterTestUser();
+      const badUser = await authFactory.resisterTestUser();
+      const { thread } = await threadFactory.createWithUser(user);
+      const updateVals: UpdateThreadDto = {
+        title: 'new title',
+        content: 'new content',
+      };
+
+      const { status, text } = await patchThread(
+        thread.id,
+        updateVals,
+        badUser.authToken,
+      );
+      expect(status).toEqual(403);
+      expect(text).toMatch(/not the author/i);
+    });
+
+    it('should NOT update the thread author', async () => {
+      const { user, authToken } = await authFactory.resisterTestUser();
+      const badUser = await authFactory.resisterTestUser();
+      const { thread } = await threadFactory.createWithUser(user);
+      const updateVals: any = {
+        author: badUser.user.username,
+      };
+
+      const { status } = await patchThread(thread.id, updateVals, authToken);
+      expect(status).toEqual(200);
+
+      const saved = await threadService.findOne(thread.id);
+      const savedPost = saved.comments[0];
+      expect(savedPost.author).toEqual(user.username);
+    });
   });
 
   describe('/thread/:id DELETE', () => {
@@ -177,6 +225,18 @@ describe('ThreadController (e2e)', () => {
 
       const result = await threadService.findOne(thread.id);
       expect(result).toBeFalsy();
+    });
+
+    it('should return status 403 if the caller is not the thread author', async () => {
+      const { user } = await authFactory.resisterTestUser();
+      const badUser = await authFactory.resisterTestUser();
+      const { thread } = await threadFactory.createWithUser(user);
+
+      const { status } = await deleteThread(thread.id, badUser.authToken);
+      expect(status).toEqual(403);
+
+      const result = await threadService.findOne(thread.id);
+      expect(result).toBeDefined();
     });
   });
 });

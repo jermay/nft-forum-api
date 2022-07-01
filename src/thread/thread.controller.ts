@@ -6,12 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { ThreadService } from './thread.service';
-import { CreateThreadDto } from './dto/create-thread.dto';
+import { CreateThreadRquestDto } from './dto/create-thread.dto';
 import { UpdateThreadDto } from './dto/update-thread.dto';
 import { Thread } from './entities/thread.entity';
+import { ApiRequest } from '../auth/api-request';
+import { ThreadAuthorGuard } from '../guards/thread-author.guard';
 
 @Controller('thread')
 export class ThreadController {
@@ -19,8 +23,14 @@ export class ThreadController {
 
   @Post()
   @ApiOkResponse({ type: Thread })
-  create(@Body() createThreadDto: CreateThreadDto) {
-    return this.threadService.create(createThreadDto);
+  create(
+    @Body() createThreadDto: CreateThreadRquestDto,
+    @Request() req: ApiRequest,
+  ) {
+    return this.threadService.create({
+      ...createThreadDto,
+      author: req.user.sub,
+    });
   }
 
   @Get()
@@ -36,6 +46,7 @@ export class ThreadController {
   }
 
   @Patch(':threadId')
+  @UseGuards(ThreadAuthorGuard)
   update(
     @Param('threadId') threadId: string,
     @Body() updateThreadDto: UpdateThreadDto,
@@ -44,6 +55,7 @@ export class ThreadController {
   }
 
   @Delete(':threadId')
+  @UseGuards(ThreadAuthorGuard)
   async remove(@Param('threadId') threadId: string) {
     await this.threadService.remove(+threadId);
   }

@@ -17,10 +17,11 @@ export class ThreadService {
     const newThread = await this.threadModel.create({
       title: createThreadDto.title,
     });
-    const post = await this.postService.create(
-      newThread.id,
-      createThreadDto.post,
-    );
+    const post = await this.postService.create({
+      threadId: newThread.id,
+      author: createThreadDto.author,
+      content: createThreadDto.content,
+    });
     newThread.postId = post.id;
     newThread.comments = [post];
     await newThread.save();
@@ -44,9 +45,11 @@ export class ThreadService {
       thread.title = updateThreadDto.title;
       promises.push(thread.save());
     }
-    if (updateThreadDto.post) {
+    if (updateThreadDto.content) {
       promises.push(
-        this.postService.update(thread.postId, updateThreadDto.post),
+        this.postService.update(thread.postId, {
+          content: updateThreadDto.content,
+        }),
       );
     }
     await Promise.all(promises);

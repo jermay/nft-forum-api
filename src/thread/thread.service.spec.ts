@@ -44,8 +44,8 @@ describe('ThreadService', () => {
     expect(threadModelMock.create).toHaveBeenCalledTimes(1);
     expect(result.title).toEqual(dto.title);
     expect(result.comments).toHaveLength(1);
-    expect(result.comments[0].author).toEqual(dto.post.author);
-    expect(result.comments[0].content).toEqual(dto.post.content);
+    expect(result.comments[0].author).toEqual(dto.author);
+    expect(result.comments[0].content).toEqual(dto.content);
   });
 
   it('should find a thread by id', async () => {

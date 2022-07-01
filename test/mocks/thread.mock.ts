@@ -7,16 +7,10 @@ import { CreateThreadDto } from '../../src/thread/dto/create-thread.dto';
 import { CreatePostDto } from '../../src/post/dto/create-post.dto';
 import { getCreatePostDto } from '../factories/post.factory';
 
-export function mockPost(
-  threadId?: number,
-  customValues?: Partial<CreatePostDto>,
-) {
+export function mockPost(customValues?: Partial<CreatePostDto>) {
   return createMock<Post>({
     id: mockId(),
-    threadId: mockId({ id: threadId }),
     ...getCreatePostDto(customValues),
-    // author: customValues?.author || faker.name.firstName(),
-    // content: customValues?.content || faker.lorem.paragraph(),
   });
 }
 
@@ -32,7 +26,7 @@ export function mockThread(customValues?: Partial<CreateThreadDto>) {
   return createMock<Thread>({
     id,
     title: customValues?.title || faker.lorem.words(),
-    comments: [mockPost(id, customValues?.post)],
+    comments: [mockPost({ ...customValues, threadId: id })],
     save: async () => this,
   });
 }
@@ -50,8 +44,9 @@ export function mockThreadModel(toFind: Thread) {
 export function getCreateThreadDto(extractFrom?: Thread): CreateThreadDto {
   const thread = extractFrom || mockThread();
   const post = thread.comments[0];
+  delete post.threadId;
   return {
     title: thread.title,
-    post,
+    ...post,
   };
 }

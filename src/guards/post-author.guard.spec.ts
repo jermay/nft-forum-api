@@ -21,7 +21,7 @@ describe('PostAuthorGuard', () => {
 
   beforeEach(() => {
     user = mockUser();
-    post = mockPost(undefined, { author: user.username });
+    post = mockPost({ author: user.username });
     postService = createMock<PostService>();
     postService.findOne.mockResolvedValue(post);
     guard = new PostAuthorGuard(postService);

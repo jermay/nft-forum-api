@@ -8,21 +8,23 @@ import {
   Delete,
   Request,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { ThreadService } from './thread.service';
 import { CreateThreadRquestDto } from './dto/create-thread.dto';
 import { UpdateThreadDto } from './dto/update-thread.dto';
-import { Thread } from './entities/thread.entity';
 import { ApiRequest } from '../auth/api-request';
 import { ThreadAuthorGuard } from '../guards/thread-author.guard';
+import { ThreadDto, ThreadHeaderDto } from './dto/thread.dto';
+import { Public } from '../decorators/public.decorator';
 
 @Controller('thread')
 export class ThreadController {
   constructor(private readonly threadService: ThreadService) {}
 
   @Post()
-  @ApiOkResponse({ type: Thread })
+  @ApiOkResponse({ type: ThreadDto })
   create(
     @Body() createThreadDto: CreateThreadRquestDto,
     @Request() req: ApiRequest,
@@ -34,29 +36,31 @@ export class ThreadController {
   }
 
   @Get()
-  @ApiOkResponse({ type: Thread, isArray: true })
+  @Public()
+  @ApiOkResponse({ type: ThreadHeaderDto, isArray: true })
   findAll() {
     return this.threadService.findAll();
   }
 
   @Get(':threadId')
-  @ApiOkResponse({ type: Thread })
-  findOne(@Param('threadId') threadId: string) {
-    return this.threadService.findOne(+threadId);
+  @Public()
+  @ApiOkResponse({ type: ThreadDto })
+  findOne(@Param('threadId', ParseIntPipe) threadId: number) {
+    return this.threadService.findOne(threadId);
   }
 
   @Patch(':threadId')
   @UseGuards(ThreadAuthorGuard)
   update(
-    @Param('threadId') threadId: string,
+    @Param('threadId', ParseIntPipe) threadId: number,
     @Body() updateThreadDto: UpdateThreadDto,
   ) {
-    return this.threadService.update(+threadId, updateThreadDto);
+    return this.threadService.update(threadId, updateThreadDto);
   }
 
   @Delete(':threadId')
   @UseGuards(ThreadAuthorGuard)
-  async remove(@Param('threadId') threadId: string) {
-    await this.threadService.remove(+threadId);
+  async remove(@Param('threadId', ParseIntPipe) threadId: number) {
+    await this.threadService.remove(threadId);
   }
 }

@@ -10,6 +10,7 @@ export function bootstrapNotForTest(app: INestApplication) {
     .setTitle('NFT Forum API')
     .setDescription('API for the NFT forum demo app')
     .setVersion('1.0')
+    .addBasicAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

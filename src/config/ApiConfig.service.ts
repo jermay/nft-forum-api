@@ -38,4 +38,20 @@ export class ApiConfigService implements EnvironmentVars {
   get JWT_SECRET(): string {
     return this.configService.get<string>('JWT_SECRET');
   }
+
+  get MORALIS_APPID(): string {
+    return this.configService.get<string>('MORALIS_APPID');
+  }
+
+  get MORALIS_MASTER_KEY(): string {
+    return this.configService.get<string>('MORALIS_MASTER_KEY');
+  }
+
+  get MORALIS_SECRET(): string {
+    return this.configService.get<string>('MORALIS_SECRET');
+  }
+
+  get MORALIS_URL(): string {
+    return this.configService.get<string>('MORALIS_URL');
+  }
 }

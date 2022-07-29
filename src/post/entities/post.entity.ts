@@ -1,5 +1,6 @@
 import {
   AutoIncrement,
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -32,4 +33,8 @@ export class Post extends Model {
   @ApiProperty()
   @Column(DataType.TEXT)
   content: string;
+
+  @ApiProperty()
+  @BelongsTo(() => User)
+  Author: User;
 }

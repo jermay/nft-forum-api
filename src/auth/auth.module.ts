@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ApiConfigModule } from '../config/ApiConfig.module';
@@ -19,7 +19,7 @@ import { PassportModule } from '@nestjs/passport';
     ApiConfigModule,
     SequelizeModule.forFeature([User]),
     EncryptionModule,
-    UserModule,
+    forwardRef(() => UserModule),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ApiConfigModule],

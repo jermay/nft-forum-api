@@ -13,6 +13,7 @@ import { ThreadModule } from './thread/thread.module';
 import { Thread } from './thread/entities/thread.entity';
 import { Post } from './post/entities/post.entity';
 import { PostModule } from './post/post.module';
+import { NftModule } from './nft/nft.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { PostModule } from './post/post.module';
         password: config.DATABASE_PASSWORD,
         database: config.DATABASE_NAME,
         autoLoadModels: true,
-        logging: false,
+        logging: true,
+        sync: { alter: true },
         models: [User, Thread, Post],
       }),
     }),
@@ -39,6 +41,7 @@ import { PostModule } from './post/post.module';
     EncryptionModule,
     ThreadModule,
     PostModule,
+    NftModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -29,6 +29,7 @@ export function mockUserAuthToken(vals?: Partial<AuthToken>): AuthToken {
   const now = Date.now() / 1000;
   return {
     sub: vals?.sub || faker.name.firstName(),
+    avatar: faker.internet.url(),
     iat: now,
     exp: now + 3600,
   };

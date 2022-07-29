@@ -30,7 +30,7 @@ export async function clearDatabase(app: INestApplication) {
     throw new Error('Attempting to clear database outside of test environment');
 
   try {
-    await User.truncate({ cascade: true });
+    await User.destroy({ where: {} });
     await Post.truncate({ cascade: true });
     await Thread.destroy({ where: {} });
   } catch (e) {

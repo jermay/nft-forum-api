@@ -50,9 +50,10 @@ describe('ThreadService', () => {
 
   it('should find a thread by id', async () => {
     const result = await service.findOne(thread.id);
-    expect(threadModelMock.findByPk).toHaveBeenCalledWith(thread.id, {
-      include: [Post],
-    });
+    expect(threadModelMock.findByPk).toHaveBeenCalledWith(
+      thread.id,
+      expect.any(Object),
+    );
     expect(result).toEqual(thread);
   });
 

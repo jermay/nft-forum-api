@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { EncryptionService } from '../encryption/encryption.service';
 import { CreateUserDto } from './dto/CreateUser.dto';
+import { UserDto } from './dto/UserDto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -24,5 +25,12 @@ export class UserService {
       password,
     });
     return user;
+  }
+
+  update(user: UserDto) {
+    return this.userModel.update(
+      { avatarUrl: user.avatarUrl },
+      { where: { username: user.username } },
+    );
   }
 }

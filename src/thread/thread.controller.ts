@@ -45,8 +45,9 @@ export class ThreadController {
   @Get(':threadId')
   @Public()
   @ApiOkResponse({ type: ThreadDto })
-  findOne(@Param('threadId', ParseIntPipe) threadId: number) {
-    return this.threadService.findOne(threadId);
+  async findOne(@Param('threadId', ParseIntPipe) threadId: number) {
+    const thread = await this.threadService.findOne(threadId);
+    return new ThreadDto(thread);
   }
 
   @Patch(':threadId')

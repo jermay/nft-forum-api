@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Post } from '../post/entities/post.entity';
 import { PostService } from '../post/post.service';
+import { User } from '../user/user.entity';
 import { CreateThreadDto } from './dto/create-thread.dto';
 import { UpdateThreadDto } from './dto/update-thread.dto';
 import { Thread } from './entities/thread.entity';
@@ -33,7 +34,12 @@ export class ThreadService {
   }
 
   findOne(id: number) {
-    return this.threadModel.findByPk(id, { include: [Post] });
+    return this.threadModel.findByPk(id, {
+      include: {
+        model: Post,
+        include: [{ model: User, as: 'Author' }],
+      },
+    });
   }
 
   async update(id: number, updateThreadDto: UpdateThreadDto) {

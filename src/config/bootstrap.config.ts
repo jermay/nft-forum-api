@@ -17,5 +17,5 @@ export function bootstrapNotForTest(app: INestApplication) {
 }
 
 export function bootstrapGlobals(app: INestApplication) {
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 }
